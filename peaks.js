@@ -1,46 +1,23 @@
 const r = require("raylib");
 
-function setup() {
-    const world = {}
-    world.width = 600;
-    world.height = 400;
-    world.title = "peaks"
-
-    r.SetTraceLogLevel(r.LOG_NONE);
-    r.InitWindow(world.width, world.height, world.title);
-    r.SetTargetFPS(50);
-
-    // world.data = [10, 20, 50, 40, 50, 60, 80, 80, 90, 10, 2, 56, 9];
-    // world.data = [10, 20, 30, 40, 50];
-    world.data = [12, 45, 78, 23, 100, 56, 34, 67, 89, 40];
-    // world.data = [100, 200, 300];
-
-    world.max = getMax(world.data);
-    world.maxHeight = calMaxHeight(world);
-    world.scaleV = calScaleValue(world.max, world.maxHeight);
-    world.peakPoints = getPeakPoints(world.data);
-    console.log(world.peakPoints);
-
-    world.scaleH = 50;
-
-    return world;
+function simpleData() {
+    // return [10, 20, 50, 40, 50, 60, 80, 80, 90, 10, 2, 56, 9]
+    return [12, 45, 78, 23, 100, 56, 34, 67, 89, 40]
 }
-
-function update(world) { }
 
 function getMax(array) {
     let max = array[0];
     for (const ele of array) {
-        if (max < ele) max = ele;
+        max = Math.max(max, ele);
     }
     return max;
 }
 
-function calMaxHeight(w) {
-    return (w.height * 90) / 100;
+function calcMaxHeight(w) {
+    return w.height * 0.9;
 }
 
-function calScaleValue(max, maxHeight) {
+function calcScaleValue(max, maxHeight) {
     return maxHeight / max;
 }
 
@@ -59,24 +36,48 @@ function getPeakPoints(array) {
     return peakPoints;
 }
 
+function setup() {
+    const world = {}
+    world.width = 600;
+    world.height = 400;
+    world.title = "peaks"
+
+    r.SetTraceLogLevel(r.LOG_NONE);
+    r.InitWindow(world.width, world.height, world.title);
+    r.SetTargetFPS(50);
+
+    world.data = simpleData();
+
+    world.max = getMax(world.data);
+    world.maxHeight = calcMaxHeight(world);
+    world.scaleV = calcScaleValue(world.max, world.maxHeight);
+    world.peakPoints = getPeakPoints(world.data);
+
+    world.scaleH = 50;
+
+    return world;
+}
+
+function update(world) { }
+
 function drawLine(w, i) {
     const startPos = {
-        x: caluX(w.scaleH, i),
-        y: caluY(w.height, w.data[i], w.scaleV),
+        x: calcX(w.scaleH, i),
+        y: calcY(w.height, w.data[i], w.scaleV),
     }
     const endPos = {
-        x: caluX(w.scaleH, i + 1),
-        y: caluY(w.height, w.data[i + 1], w.scaleV),
+        x: calcX(w.scaleH, i + 1),
+        y: calcY(w.height, w.data[i + 1], w.scaleV),
     }
 
     r.DrawLineV(startPos, endPos, r.BLACK);
 }
 
-function caluY(height, ele, scaleV) {
+function calcY(height, ele, scaleV) {
     return height - ele * scaleV;
 }
 
-function caluX(scaleH, i) {
+function calcX(scaleH, i) {
     return scaleH * i;
 }
 
@@ -89,8 +90,8 @@ function drawLineGraph(w) {
 function drawPeaks(w) {
     for (let i = 0; i < w.peakPoints.length; i++) {
         const pos = {
-            x: caluX(w.scaleH, w.peakPoints[i].i),
-            y: caluY(w.height, w.peakPoints[i].point, w.scaleV),
+            x: calcX(w.scaleH, w.peakPoints[i].i),
+            y: calcY(w.height, w.peakPoints[i].point, w.scaleV),
         }
         const radius = 5;
 
