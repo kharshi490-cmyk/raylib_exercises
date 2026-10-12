@@ -18,12 +18,12 @@ function setup() {
     }
 
     world.data = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160]
-    // const data = [12, 45, 78, 23, 91, 56, 34, 67, 89, 40];
-    // const data = [10, 20, 30, 40, 50];
-    // const data = [100, 200, 300];
+    // world.data = [10, 20, 30, 40, 50];
+    // world.data = [12, 45, 78, 23, 91, 56, 34, 67, 89, 40];
+    // world.data = [100, 200, 300];
 
-    world.max = calMax(data);
-    world.average = calAverage(data);
+    world.max = calMax(world.data);
+    world.average = calAverage(world.data);
     world.maxHeight = calMaxHeight(world);
     world.scaleValue = calScaleValue(world.max, world.maxHeight);
 
@@ -61,42 +61,15 @@ function calScaleValue(max, maxHeight) {
     return maxHeight / max;
 }
 
-function drawGraph(world, i, ele) {
+function drawGraph(world, i) {
     const graph = {
         x: (world.barGraph.width + world.barGraph.gap) * i + 10,
-        y: world.height - ele * world.scaleValue,
+        y: world.height - world.data[i] * world.scaleValue,
         width: world.barGraph.width,
-        height: ele * world.scaleValue,
+        height: world.data[i] * world.scaleValue,
     }
 
     r.DrawRectangleRec(graph, r.DARKBLUE);
-}
-
-function draw(world) {
-    r.BeginDrawing();
-    r.ClearBackground(world.bgColor);
-
-    // // const data = [12, 45, 78, 23, 91, 56, 34, 67, 89, 40];
-    // const data = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160]
-    // // const data = [10, 20, 30, 40, 50];
-    // // const data = [100, 200, 300];
-
-    // const max = calMax(data);
-    // const average = calAverage(data);
-    // const maxHeight = calMaxHeight(world);
-    // const scaleValue = calScaleValue(max, maxHeight);
-
-    // const barGraph = {
-    //     width: 30,
-    //     gap: 2
-    // }
-
-    for (let i = 0; i < data.length; i++) {
-        drawGraph(world, i, data[i]);
-    }
-    drawLine(world);
-
-    r.EndDrawing();
 }
 
 function drawLine(world) {
@@ -110,6 +83,22 @@ function drawLine(world) {
     }
 
     r.DrawLineEx(startPos, endPos, 2, r.RED);
+}
+
+function drawGraphs(world) {
+    for (let i = 0; i < world.data.length; i++) {
+        drawGraph(world, i);
+    }
+}
+
+function draw(world) {
+    r.BeginDrawing();
+    r.ClearBackground(world.bgColor);
+
+    drawGraphs(world);
+    drawLine(world);
+
+    r.EndDrawing();
 }
 
 function loop(world) {
