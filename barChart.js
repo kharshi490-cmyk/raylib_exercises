@@ -10,6 +10,28 @@ function setup() {
     r.InitWindow(world.width, world.height, world.title);
     r.SetTargetFPS(50);
 
+    world.bgColor = {
+        r: 241,
+        g: 241,
+        b: 242,
+        a: 255,
+    }
+
+    world.data = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160]
+    // const data = [12, 45, 78, 23, 91, 56, 34, 67, 89, 40];
+    // const data = [10, 20, 30, 40, 50];
+    // const data = [100, 200, 300];
+
+    world.max = calMax(data);
+    world.average = calAverage(data);
+    world.maxHeight = calMaxHeight(world);
+    world.scaleValue = calScaleValue(world.max, world.maxHeight);
+
+    world.barGraph = {
+        width: 30,
+        gap: 2
+    }
+
     return world;
 }
 
@@ -31,66 +53,60 @@ function calAverage(array) {
     return sum / array.length;
 }
 
+function calMaxHeight(world) {
+    return (world.height * 90) / 100;
+}
+
 function calScaleValue(max, maxHeight) {
     return maxHeight / max;
 }
 
-function drawGraph(windowHeight, barGraph, i, ele, scale) {
+function drawGraph(world, i, ele) {
     const graph = {
-        x: (barGraph.width + barGraph.gap) * i + 10,
-        y: windowHeight - ele * scale,
-        width: barGraph.width,
-        height: ele * scale,
+        x: (world.barGraph.width + world.barGraph.gap) * i + 10,
+        y: world.height - ele * world.scaleValue,
+        width: world.barGraph.width,
+        height: ele * world.scaleValue,
     }
 
     r.DrawRectangleRec(graph, r.DARKBLUE);
 }
 
-function calMaxHeight(world) {
-    return (world.height * 90) / 100;
-}
-
 function draw(world) {
-    const bgColor = {
-        r: 241,
-        g: 241,
-        b: 242,
-        a: 255,
-    }
     r.BeginDrawing();
-    r.ClearBackground(bgColor);
+    r.ClearBackground(world.bgColor);
 
-    // const data = [12, 45, 78, 23, 91, 56, 34, 67, 89, 40];
-    const data = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160]
-    // const data = [10, 20, 30, 40, 50];
-    // const data = [100, 200, 300];
+    // // const data = [12, 45, 78, 23, 91, 56, 34, 67, 89, 40];
+    // const data = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160]
+    // // const data = [10, 20, 30, 40, 50];
+    // // const data = [100, 200, 300];
 
-    const max = calMax(data);
-    const average = calAverage(data);
-    const maxHeight = calMaxHeight(world);
-    const scaleValue = calScaleValue(max, maxHeight);
+    // const max = calMax(data);
+    // const average = calAverage(data);
+    // const maxHeight = calMaxHeight(world);
+    // const scaleValue = calScaleValue(max, maxHeight);
 
-    const barGraph = {
-        width: 30,
-        gap: 2
-    }
+    // const barGraph = {
+    //     width: 30,
+    //     gap: 2
+    // }
 
     for (let i = 0; i < data.length; i++) {
-        drawGraph(world.height, barGraph, i, data[i], scaleValue);
+        drawGraph(world, i, data[i]);
     }
-    drawLine(world, average, scaleValue);
+    drawLine(world);
 
     r.EndDrawing();
 }
 
-function drawLine(world, average, scaleValue) {
+function drawLine(world) {
     const startPos = {
         x: 0,
-        y: world.height - average * scaleValue,
+        y: world.height - world.average * world.scaleValue,
     }
     const endPos = {
         x: world.width,
-        y: world.height - average * scaleValue,
+        y: world.height - world.average * world.scaleValue,
     }
 
     r.DrawLineEx(startPos, endPos, 2, r.RED);
