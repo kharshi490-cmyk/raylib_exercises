@@ -10,9 +10,9 @@ function setup() {
     r.InitWindow(world.width, world.height, world.title);
     r.SetTargetFPS(50);
 
-    world.data = [10, 20, 50, 40, 50, 60, 80, 80, 90, 10, 2, 56, 9];
+    // world.data = [10, 20, 50, 40, 50, 60, 80, 80, 90, 10, 2, 56, 9];
     // world.data = [10, 20, 30, 40, 50];
-    // world.data = [12, 45, 78, 23, 100, 56, 34, 67, 89, 40];
+    world.data = [12, 45, 78, 23, 100, 56, 34, 67, 89, 40];
     // world.data = [100, 200, 300];
 
     world.max = getMax(world.data);
@@ -44,10 +44,14 @@ function calScaleValue(max, maxHeight) {
     return maxHeight / max;
 }
 
+function isBetween(array, i) {
+    return array[i - 1] < array[i] && array[i + 1] < array[i];
+}
+
 function getPeakPoints(array) {
     const peakPoints = [];
     for (let i = 1; i < array.length - 1; i++) {
-        if (array[i - 1] < array[i] && array[i + 1] < array[i]) {
+        if (isBetween(array, i)) {
             const peak = { point: array[i], i: i };
             peakPoints.push(peak);
         }
@@ -57,15 +61,23 @@ function getPeakPoints(array) {
 
 function drawLine(w, i) {
     const startPos = {
-        x: w.scaleH * i,
-        y: w.height - w.data[i] * w.scaleV,
+        x: caluX(w.scaleH, i),
+        y: caluY(w.height, w.data[i], w.scaleV),
     }
     const endPos = {
-        x: w.scaleH * (i + 1),
-        y: w.height - w.data[i + 1] * w.scaleV,
+        x: caluX(w.scaleH, i + 1),
+        y: caluY(w.height, w.data[i + 1], w.scaleV),
     }
 
     r.DrawLineV(startPos, endPos, r.BLACK);
+}
+
+function caluY(height, ele, scaleV) {
+    return height - ele * scaleV;
+}
+
+function caluX(scaleH, i) {
+    return scaleH * i;
 }
 
 function drawLineGraph(w) {
@@ -77,8 +89,8 @@ function drawLineGraph(w) {
 function drawPeaks(w) {
     for (let i = 0; i < w.peakPoints.length; i++) {
         const pos = {
-            x: w.scaleH * w.peakPoints[i].i,
-            y: w.height - w.peakPoints[i].point * w.scaleV,
+            x: caluX(w.scaleH, w.peakPoints[i].i),
+            y: caluY(w.height, w.peakPoints[i].point, w.scaleV),
         }
         const radius = 5;
 
@@ -88,7 +100,7 @@ function drawPeaks(w) {
 
 function draw(world) {
     r.BeginDrawing();
-    r.ClearBackground(r.GRAY);
+    r.ClearBackground(r.RAYWHITE);
 
     drawLineGraph(world);
     drawPeaks(world);
