@@ -17,8 +17,8 @@ function calcMaxHeight(w) {
     return w.height * 0.9;
 }
 
-function calcScaleValue(max, maxHeight) {
-    return maxHeight / max;
+function getDivision(divisor, dividend) {
+    return dividend / divisor;
 }
 
 function isBetween(array, i) {
@@ -33,6 +33,7 @@ function getPeakPoints(array) {
             peakPoints.push(peak);
         }
     }
+
     return peakPoints;
 }
 
@@ -50,7 +51,7 @@ function setup() {
 
     world.max = getMax(world.data);
     world.maxHeight = calcMaxHeight(world);
-    world.scaleV = calcScaleValue(world.max, world.maxHeight);
+    world.scaleV = getDivision(world.max, world.maxHeight);
     world.peakPoints = getPeakPoints(world.data);
 
     world.scaleH = 50;

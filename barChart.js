@@ -3,7 +3,7 @@ const r = require("raylib");
 function calMax(array) {
     let max = array[0];
     for (const ele of array) {
-        if (max < ele) max = ele;
+        max = Math.max(max, ele);
     }
     return max;
 }
@@ -61,10 +61,14 @@ function setup() {
 
 function update(world) { }
 
+function calcY(world, ele) {
+    return world.height - ele * world.scaleValue;
+}
+
 function drawGraph(world, i) {
     const graph = {
         x: (world.barGraph.width + world.barGraph.gap) * i + 10,
-        y: world.height - world.data[i] * world.scaleValue,
+        y: calcY(world, world.data[i]),
         width: world.barGraph.width,
         height: world.data[i] * world.scaleValue,
     }
@@ -75,11 +79,11 @@ function drawGraph(world, i) {
 function drawLine(world) {
     const startPos = {
         x: 0,
-        y: world.height - world.average * world.scaleValue,
+        y: calcY(world, world.average),
     }
     const endPos = {
         x: world.width,
-        y: world.height - world.average * world.scaleValue,
+        y: calcY(world, world.average),
     }
 
     r.DrawLineEx(startPos, endPos, 2, r.RED);
